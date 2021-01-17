@@ -30,7 +30,6 @@ public class UserServiceImplementation implements UserService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
-    private final Validator validator;
     private final UserInfoService userInfoService;
     private final UserTokenService userTokenService;
     @Override
@@ -69,10 +68,10 @@ public class UserServiceImplementation implements UserService {
         if (userRepository.findByEmail(userDTO.getEmail()).isPresent()) {
             throw new NotValidRegistrationDataException("Such email already using");
         }
-        if (!validator.isValidEmail(userDTO.getEmail())){
+        if (!Validator.isValidEmail(userDTO.getEmail())){
             throw new NotValidRegistrationDataException("Not valid email");
         }
-        if (!validator.isValidPassword(userDTO.getPassword())){
+        if (!Validator.isValidPassword(userDTO.getPassword())){
             throw new NotValidRegistrationDataException("Not valid password");
         }
     }
@@ -89,7 +88,7 @@ public class UserServiceImplementation implements UserService {
 
     @Override
     public void changePassword(User user, String password) throws ChangePaswordDataException {
-        if (!validator.isValidPassword(password)) {
+        if (!Validator.isValidPassword(password)) {
             throw new ChangePaswordDataException("Not valid password");
         }
         user.setPassword(passwordEncoder.encode(password));
@@ -98,7 +97,7 @@ public class UserServiceImplementation implements UserService {
 
     @Override
     public void changeEmail(User user, String email) {
-        if (!validator.isValidEmail(email)) {
+        if (!Validator.isValidEmail(email)) {
             throw new ChangeEmailDataException("Not valid email");
         }
         user.setEmail(email);
@@ -113,10 +112,10 @@ public class UserServiceImplementation implements UserService {
     }
 
     private void validatePasswords(User user, String oldPassword, String newPassword) {
-        if (!validator.isValidPassword(oldPassword)){
+        if (!Validator.isValidPassword(oldPassword)){
             throw new ChangePaswordDataException("Old password is not valid");
         }
-        if (!validator.isValidPassword(newPassword)) {
+        if (!Validator.isValidPassword(newPassword)) {
             throw new ChangePaswordDataException("New password is not valid");
         }
 
