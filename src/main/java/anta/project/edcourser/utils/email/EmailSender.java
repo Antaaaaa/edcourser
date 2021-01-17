@@ -52,17 +52,18 @@ public class EmailSender implements EmailService {
 
   @Override
   public void sendEmailOnLogin(String email, String message) {
-    sendEmailToAddress(Stream.of(email).collect(toList()), LOGIN_SUBJECT, message);
+    sendEmailToAddressHtmlMessage(Stream.of(email).collect(toList()), LOGIN_SUBJECT, message);
   }
 
   @Override
   public void sendEmailOnRegistration(String email, String message) {
-    sendEmailToAddressHtmlMessage(Stream.of(email).collect(toList()), REGISTRATION_CONFIRMATION, message);
+    final String htmlMessage = HTMLemailPattern.getConfirmRegisterMessage(email, message);
+    sendEmailToAddressHtmlMessage(Stream.of(email).collect(toList()), REGISTRATION_CONFIRMATION, htmlMessage);
   }
 
   @Override
   public void sendEmailOnChangePassword(String email, String message) {
-    final String htmlMessage = HTMLemailPattern.geRestorePasswordMessage(email,message);
+    final String htmlMessage = HTMLemailPattern.getRestorePasswordMessage(email,message);
     sendEmailToAddressHtmlMessage(Stream.of(email).collect(toList()), CHANGE_PASS_CONFIRM, htmlMessage);
   }
 
