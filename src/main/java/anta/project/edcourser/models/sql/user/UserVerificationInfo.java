@@ -13,7 +13,6 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "user_verification_info")
 @EqualsAndHashCode(callSuper = true)
-@RequiredArgsConstructor
 @NoArgsConstructor
 @Data
 public class UserVerificationInfo extends BaseEntity {

@@ -12,7 +12,6 @@ import javax.persistence.*;
 @Entity
 @Table(name = "users", uniqueConstraints = @UniqueConstraint(columnNames = {"id"}))
 @EqualsAndHashCode(callSuper = true)
-@RequiredArgsConstructor
 @NoArgsConstructor
 @Data
 public class User extends BaseEntity {
