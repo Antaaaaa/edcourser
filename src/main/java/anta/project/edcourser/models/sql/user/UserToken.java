@@ -12,7 +12,6 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "token")
 @EqualsAndHashCode(callSuper = true)
-@RequiredArgsConstructor
 @NoArgsConstructor
 @Data
 public class UserToken extends BaseEntity {

@@ -12,7 +12,6 @@ import javax.persistence.*;
 @Entity
 @Table(name = "user_config")
 @EqualsAndHashCode(callSuper = true)
-@RequiredArgsConstructor
 @NoArgsConstructor
 @Data
 public class UserConfig extends BaseEntity {
