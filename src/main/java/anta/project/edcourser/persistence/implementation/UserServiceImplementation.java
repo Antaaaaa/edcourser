@@ -32,6 +32,7 @@ public class UserServiceImplementation implements UserService {
     private final JwtTokenProvider jwtTokenProvider;
     private final UserInfoService userInfoService;
     private final UserTokenService userTokenService;
+
     @Override
     public List<User> findAll() {
         return userRepository.findAll();
@@ -68,10 +69,10 @@ public class UserServiceImplementation implements UserService {
         if (userRepository.findByEmail(userDTO.getEmail()).isPresent()) {
             throw new NotValidRegistrationDataException("Such email already using");
         }
-        if (!Validator.isValidEmail(userDTO.getEmail())){
+        if (!Validator.isValidEmail(userDTO.getEmail())) {
             throw new NotValidRegistrationDataException("Not valid email");
         }
-        if (!Validator.isValidPassword(userDTO.getPassword())){
+        if (!Validator.isValidPassword(userDTO.getPassword())) {
             throw new NotValidRegistrationDataException("Not valid password");
         }
     }
@@ -87,7 +88,7 @@ public class UserServiceImplementation implements UserService {
     }
 
     @Override
-    public void changePassword(User user, String password) throws ChangePaswordDataException {
+    public void changePassword(User user, String password) {
         if (!Validator.isValidPassword(password)) {
             throw new ChangePaswordDataException("Not valid password");
         }
@@ -112,7 +113,7 @@ public class UserServiceImplementation implements UserService {
     }
 
     private void validatePasswords(User user, String oldPassword, String newPassword) {
-        if (!Validator.isValidPassword(oldPassword)){
+        if (!Validator.isValidPassword(oldPassword)) {
             throw new ChangePaswordDataException("Old password is not valid");
         }
         if (!Validator.isValidPassword(newPassword)) {
