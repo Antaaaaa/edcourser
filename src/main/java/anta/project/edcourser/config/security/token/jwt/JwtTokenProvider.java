@@ -1,5 +1,6 @@
 package anta.project.edcourser.config.security.token.jwt;
 
+import anta.project.edcourser.exceptions.UserNotFoundException;
 import anta.project.edcourser.services.user.UserService;
 import anta.project.edcourser.models.sql.user.User;
 import anta.project.edcourser.services.user.UserService;
@@ -87,16 +88,17 @@ public class JwtTokenProvider {
             String bearerToken = req.getHeader("Authorization");
             bearerToken = bearerToken.substring(7, bearerToken.length());
 
-            return userService.findByEmail(getEmail(bearerToken));
+            return userService.findByEmail(getEmail(bearerToken))
+                    .orElseThrow(() -> new UserNotFoundException("User not found"));
         } catch (ExpiredJwtException e) {
-
             return null;
         }
     }
 
     public User getUserByToken(String bearerToken) {
         try {
-            return userService.findByEmail(getEmail(bearerToken));
+            return userService.findByEmail(getEmail(bearerToken))
+                    .orElseThrow(() -> new UserNotFoundException("User not found"));
         } catch (ExpiredJwtException e) {
             return null;
         }
@@ -104,7 +106,7 @@ public class JwtTokenProvider {
 
     public String resolveToken(HttpServletRequest req) {
         String bearerToken = req.getHeader("Authorization");
-        if (bearerToken != null && bearerToken.startsWith("Bearer_")) {
+        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
             return bearerToken.substring(7, bearerToken.length());
         }
         return null;

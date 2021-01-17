@@ -2,6 +2,7 @@ package anta.project.edcourser.config.security;
 
 import anta.project.edcourser.config.security.token.jwt.JwtTokenProvider;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.stereotype.Service;
 
@@ -21,5 +22,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private static final String LOGIN_ENDPOINT = "/api/authorization";
     private static final String REGISTRATION_ENDPOINT = "/api/registration";
     private static final String RESTORE_PASSWORD = "/api/restore_password/**";
+
+    @Autowired
+    public SecurityConfig(JwtTokenProvider jwtTokenProvider) {
+        this.jwtTokenProvider = jwtTokenProvider;
+    }
+
 
 }
