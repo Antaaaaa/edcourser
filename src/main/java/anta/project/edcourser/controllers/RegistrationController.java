@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
@@ -18,6 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 @RestController
 @RequiredArgsConstructor
 @Log4j2
+@RequestMapping(value = "/api")
 public class RegistrationController {
 
     private final UserService userService;
@@ -31,7 +33,7 @@ public class RegistrationController {
         } catch (NotValidRegistrationDataException exception) {
             return new MvcResponseError(Statuses.RegistrationFailed, exception.getMessage());
         } catch (Exception ex) {
-            return new MvcResponseError(400, "Error registration");
+            return new MvcResponseError(400, ex.getMessage());
         }
         return new MvcResponse(Statuses.Ok);
     }

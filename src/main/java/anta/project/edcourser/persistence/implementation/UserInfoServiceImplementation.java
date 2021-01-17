@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class UserInfoServiceImplementation implements UserInfoService {
 
-    private UserInfoRepository userInfoRepository;
+    private final UserInfoRepository userInfoRepository;
 
 
     @Override
