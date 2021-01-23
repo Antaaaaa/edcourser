@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -16,8 +17,10 @@ import javax.persistence.Table;
 @NoArgsConstructor
 @Data
 public class UserInfo extends BaseEntity {
-    @Column(name = "user_id")
-    private Long userId;
+
+    @OneToOne(mappedBy = "userInfo")
+    private User user;
+
     @Column(name = "name")
     private String name;
     @Column(name = "nickName")
@@ -26,4 +29,5 @@ public class UserInfo extends BaseEntity {
     private String phone;
     @Column(name = "country")
     private String country;
+
 }

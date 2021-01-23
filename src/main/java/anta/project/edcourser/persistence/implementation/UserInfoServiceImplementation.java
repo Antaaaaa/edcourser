@@ -16,7 +16,7 @@ public class UserInfoServiceImplementation implements UserInfoService {
 
 
     @Override
-    public UserInfo saveUserInfo(UserInfo userInfo) {
+    public UserInfo save(UserInfo userInfo) {
         return userInfoRepository.save(userInfo);
     }
 }

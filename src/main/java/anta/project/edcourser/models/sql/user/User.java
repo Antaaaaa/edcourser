@@ -25,4 +25,20 @@ public class User extends BaseEntity {
     @Column(name = "user_role")
     @Enumerated(EnumType.STRING)
     private UserRole userRole;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_config_id", referencedColumnName = "id")
+    UserConfig userConfig;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_info_id", referencedColumnName = "id")
+    UserInfo userInfo;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_token_id", referencedColumnName = "id")
+    UserToken userToken;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "user_verification_info_id", referencedColumnName = "id")
+    UserVerificationInfo userVerificationInfo;
 }

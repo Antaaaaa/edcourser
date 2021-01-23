@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -15,7 +16,8 @@ import javax.persistence.Table;
 @NoArgsConstructor
 @Data
 public class UserToken extends BaseEntity {
-    @Column(name = "user_id")
-    private Long userId;
+    @OneToOne(mappedBy = "userToken")
+    private User user;
+
     private String token;
 }

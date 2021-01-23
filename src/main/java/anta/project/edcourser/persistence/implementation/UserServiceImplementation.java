@@ -4,19 +4,16 @@ import anta.project.edcourser.config.security.token.jwt.JwtTokenProvider;
 import anta.project.edcourser.dto.authorization.UserAuthorization;
 import anta.project.edcourser.dto.authorization.UserRegistration;
 import anta.project.edcourser.enums.UserRole;
+import anta.project.edcourser.enums.UserVerificationStatus;
 import anta.project.edcourser.exceptions.authorization.NotValidRegistrationDataException;
 import anta.project.edcourser.exceptions.authorization.UserCreationException;
 import anta.project.edcourser.exceptions.authorization.UserNotFoundException;
 import anta.project.edcourser.exceptions.authorization.UserTokenNotFoundException;
 import anta.project.edcourser.exceptions.data.ChangeEmailDataException;
 import anta.project.edcourser.exceptions.data.ChangePaswordDataException;
-import anta.project.edcourser.models.sql.user.User;
-import anta.project.edcourser.models.sql.user.UserInfo;
-import anta.project.edcourser.models.sql.user.UserToken;
+import anta.project.edcourser.models.sql.user.*;
 import anta.project.edcourser.persistence.repositories.UserRepository;
-import anta.project.edcourser.services.user.UserInfoService;
-import anta.project.edcourser.services.user.UserService;
-import anta.project.edcourser.services.user.UserTokenService;
+import anta.project.edcourser.services.user.*;
 import anta.project.edcourser.utils.Validator;
 import anta.project.edcourser.utils.email.EmailSender;
 import lombok.AllArgsConstructor;
@@ -39,6 +36,8 @@ public class UserServiceImplementation implements UserService {
     private final UserRepository userRepository;
     private final UserInfoService userInfoService;
     private final UserTokenService userTokenService;
+    private final UserConfigService userConfigService;
+    private final UserVerificationInfoService userVerificationInfoService;
     private final EmailSender emailSender;
 
     private JwtTokenProvider jwtTokenProvider;
@@ -46,7 +45,7 @@ public class UserServiceImplementation implements UserService {
     private BCryptPasswordEncoder passwordEncoder;
 
     @Autowired
-    public void setAll(@Lazy JwtTokenProvider jwtTokenProvider,
+    public void setCircularDependencies(@Lazy JwtTokenProvider jwtTokenProvider,
                        @Lazy AuthenticationManager authenticationManager,
                        @Lazy BCryptPasswordEncoder passwordEncoder) {
         this.jwtTokenProvider = jwtTokenProvider;
@@ -72,7 +71,9 @@ public class UserServiceImplementation implements UserService {
     @Override
     public User register(UserRegistration userDTO) {
         User user = userRepository.save(createUser(userDTO).orElseThrow(() -> new UserCreationException("It is not possible to create such user")));
-        userInfoService.saveUserInfo(createDefaultUserInfo(user, userDTO));
+        createDefaultUserInfo(user, userDTO);
+        createDefaultUserConfig(user);
+        createDefaultUserVerificationInfo(user);
         return user;
     }
 
@@ -108,14 +109,33 @@ public class UserServiceImplementation implements UserService {
         }
     }
 
-    private UserInfo createDefaultUserInfo(User user, UserRegistration registrationDTO) {
+    private void createDefaultUserInfo(User user, UserRegistration registrationDTO) {
         UserInfo userInfo = new UserInfo();
-        userInfo.setUserId(user.getId());
+        userInfo.setUser(user);
         userInfo.setName(registrationDTO.getName());
         userInfo.setNickName(registrationDTO.getNickName());
         userInfo.setCountry(registrationDTO.getCountry());
         userInfo.setPhone(registrationDTO.getPhone());
-        return userInfo;
+        user.setUserInfo(userInfo);
+        userInfoService.save(userInfo);
+        userRepository.save(user);
+    }
+
+    private void createDefaultUserConfig(User user) {
+        UserConfig userConfig = new UserConfig();
+        userConfig.setUser(user);
+        userConfig.setVerificationStatus(UserVerificationStatus.NOT_SEND);
+        user.setUserConfig(userConfig);
+        userConfigService.save(userConfig);
+        userRepository.save(user);
+    }
+
+    private void createDefaultUserVerificationInfo(User user) {
+        UserVerificationInfo userVerificationInfo = new UserVerificationInfo();
+        userVerificationInfo.setUser(user);
+        user.setUserVerificationInfo(userVerificationInfo);
+        userVerificationInfoService.save(userVerificationInfo);
+        userRepository.save(user);
     }
 
     @Override
@@ -171,9 +191,11 @@ public class UserServiceImplementation implements UserService {
             userToken = getTokenByUserEmail(user.getEmail());
         } else {
             userToken = new UserToken();
-            userToken.setUserId(user.getId());
+            userToken.setUser(user);
         }
         userToken.setToken(token);
+        user.setUserToken(userToken);
         userTokenService.save(userToken);
+        userRepository.save(user);
     }
 }

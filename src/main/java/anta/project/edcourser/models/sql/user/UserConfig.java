@@ -16,8 +16,8 @@ import javax.persistence.*;
 @Data
 public class UserConfig extends BaseEntity {
 
-    @Column(name = "user_id")
-    private Long userId;
+    @OneToOne(mappedBy = "userConfig")
+    private User user;
 
     @Column(name = "user_verification_status")
     @Enumerated(EnumType.STRING)

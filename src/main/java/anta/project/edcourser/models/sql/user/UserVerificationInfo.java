@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -16,8 +17,10 @@ import javax.persistence.Table;
 @NoArgsConstructor
 @Data
 public class UserVerificationInfo extends BaseEntity {
-    @Column(name = "user_id")
-    private Long userId;
+
+    @OneToOne(mappedBy = "userVerificationInfo")
+    private User user;
+
     @Column(name = "first_name")
     private String firstName;
     @Column(name = "last_name")
@@ -25,11 +28,11 @@ public class UserVerificationInfo extends BaseEntity {
     @Column(name = "patronymic_name")
     private String patronymicName;
     @Column(name = "day_of_birth")
-    private byte dayOfBirth;
+    private Byte dayOfBirth;
     @Column(name = "month_of_birth")
     private String monthOfBirth;
     @Column(name = "year_of_birth")
-    private short yearOfBirth;
+    private Short yearOfBirth;
     @Column(name = "city")
     private String city;
     @Column(name = "phone_number")
