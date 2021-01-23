@@ -1,12 +1,10 @@
 package anta.project.edcourser.persistence.implementation;
 
-import anta.project.edcourser.exceptions.UserTokenNotFoundException;
-import anta.project.edcourser.models.sql.user.User;
+import anta.project.edcourser.exceptions.authorization.UserTokenNotFoundException;
 import anta.project.edcourser.models.sql.user.UserToken;
 import anta.project.edcourser.persistence.repositories.UserTokenRepository;
 import anta.project.edcourser.services.user.UserTokenService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
@@ -25,5 +23,10 @@ public class UserTokenServiceImplementation implements UserTokenService {
     @Override
     public UserToken save(UserToken userToken) {
         return userTokenRepository.save(userToken);
+    }
+
+    @Override
+    public boolean isPresent(Long id) {
+        return userTokenRepository.existsByUserId(id);
     }
 }

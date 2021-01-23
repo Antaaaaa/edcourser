@@ -3,7 +3,7 @@ package anta.project.edcourser.dto.authorization;
 import lombok.Data;
 
 @Data
-public class UserRegistrationDTO {
+public class UserRegistration {
     private String email;
     private String password;
     private String name;

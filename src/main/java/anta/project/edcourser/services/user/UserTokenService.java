@@ -8,4 +8,5 @@ import org.springframework.stereotype.Service;
 public interface UserTokenService {
     UserToken findByUserId(Long id);
     UserToken save(UserToken userToken);
+    boolean isPresent(Long id);
 }

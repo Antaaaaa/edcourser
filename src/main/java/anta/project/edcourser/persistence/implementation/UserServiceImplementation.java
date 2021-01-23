@@ -1,9 +1,15 @@
 package anta.project.edcourser.persistence.implementation;
 
 import anta.project.edcourser.config.security.token.jwt.JwtTokenProvider;
-import anta.project.edcourser.dto.authorization.UserRegistrationDTO;
+import anta.project.edcourser.dto.authorization.UserAuthorization;
+import anta.project.edcourser.dto.authorization.UserRegistration;
 import anta.project.edcourser.enums.UserRole;
-import anta.project.edcourser.exceptions.*;
+import anta.project.edcourser.exceptions.authorization.NotValidRegistrationDataException;
+import anta.project.edcourser.exceptions.authorization.UserCreationException;
+import anta.project.edcourser.exceptions.authorization.UserNotFoundException;
+import anta.project.edcourser.exceptions.authorization.UserTokenNotFoundException;
+import anta.project.edcourser.exceptions.data.ChangeEmailDataException;
+import anta.project.edcourser.exceptions.data.ChangePaswordDataException;
 import anta.project.edcourser.models.sql.user.User;
 import anta.project.edcourser.models.sql.user.UserInfo;
 import anta.project.edcourser.models.sql.user.UserToken;
@@ -12,15 +18,18 @@ import anta.project.edcourser.services.user.UserInfoService;
 import anta.project.edcourser.services.user.UserService;
 import anta.project.edcourser.services.user.UserTokenService;
 import anta.project.edcourser.utils.Validator;
+import anta.project.edcourser.utils.email.EmailSender;
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.sql.SQLException;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @Log4j2
@@ -28,10 +37,22 @@ import java.util.Optional;
 public class UserServiceImplementation implements UserService {
 
     private final UserRepository userRepository;
-    private final BCryptPasswordEncoder passwordEncoder;
-    private final JwtTokenProvider jwtTokenProvider;
     private final UserInfoService userInfoService;
     private final UserTokenService userTokenService;
+    private final EmailSender emailSender;
+
+    private JwtTokenProvider jwtTokenProvider;
+    private AuthenticationManager manager;
+    private BCryptPasswordEncoder passwordEncoder;
+
+    @Autowired
+    public void setAll(@Lazy JwtTokenProvider jwtTokenProvider,
+                       @Lazy AuthenticationManager authenticationManager,
+                       @Lazy BCryptPasswordEncoder passwordEncoder) {
+        this.jwtTokenProvider = jwtTokenProvider;
+        this.manager = authenticationManager;
+        this.passwordEncoder = passwordEncoder;
+    }
 
     @Override
     public List<User> findAll() {
@@ -39,23 +60,33 @@ public class UserServiceImplementation implements UserService {
     }
 
     @Override
-    public Optional<User> findByEmail(String email) {
-        return userRepository.findByEmail(email);
+    public User findByEmail(String email) {
+        return userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException(String.format("No user with email: %s", email)));
     }
 
     @Override
-    public Optional<User> findById(Long id) {
-        return userRepository.findById(id);
+    public User findById(Long id) {
+        return userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(String.format("No user with id: %s", id)));
     }
 
     @Override
-    public Optional<User> register(UserRegistrationDTO userDTO) {
+    public User register(UserRegistration userDTO) {
         User user = userRepository.save(createUser(userDTO).orElseThrow(() -> new UserCreationException("It is not possible to create such user")));
         userInfoService.saveUserInfo(createDefaultUserInfo(user, userDTO));
-        return Optional.of(user);
+        return user;
     }
 
-    private Optional<User> createUser(UserRegistrationDTO userDTO) {
+    @Override
+    public Map<String, String> login(UserAuthorization authorization) {
+        manager.authenticate(new UsernamePasswordAuthenticationToken(
+                authorization.getEmail(), authorization.getPassword()));
+        User user = findByEmail(authorization.getEmail());
+        String token = jwtTokenProvider.createToken(user.getEmail());
+        saveUserToken(user, token);
+        return Map.of("email", user.getEmail(), "token", token);
+    }
+
+    private Optional<User> createUser(UserRegistration userDTO) {
         validateUser(userDTO);
         User user = new User();
         user.setEmail(userDTO.getEmail());
@@ -65,7 +96,7 @@ public class UserServiceImplementation implements UserService {
         return Optional.of(user);
     }
 
-    private void validateUser(UserRegistrationDTO userDTO) {
+    private void validateUser(UserRegistration userDTO) {
         if (userRepository.findByEmail(userDTO.getEmail()).isPresent()) {
             throw new NotValidRegistrationDataException("Such email already using");
         }
@@ -77,7 +108,7 @@ public class UserServiceImplementation implements UserService {
         }
     }
 
-    private UserInfo createDefaultUserInfo(User user, UserRegistrationDTO registrationDTO) {
+    private UserInfo createDefaultUserInfo(User user, UserRegistration registrationDTO) {
         UserInfo userInfo = new UserInfo();
         userInfo.setUserId(user.getId());
         userInfo.setName(registrationDTO.getName());
@@ -135,7 +166,13 @@ public class UserServiceImplementation implements UserService {
 
     @Override
     public void saveUserToken(User user, String token) {
-        UserToken userToken = getTokenByUserEmail(user.getEmail());
+        UserToken userToken;
+        if (userTokenService.isPresent(user.getId())) {
+            userToken = getTokenByUserEmail(user.getEmail());
+        } else {
+            userToken = new UserToken();
+            userToken.setUserId(user.getId());
+        }
         userToken.setToken(token);
         userTokenService.save(userToken);
     }
