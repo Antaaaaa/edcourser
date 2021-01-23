@@ -1,6 +1,6 @@
 package anta.project.edcourser.utils.email;
 
-import anta.project.edcourser.services.email.EmailService;
+import anta.project.edcourser.services.mail.EmailService;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.log4j.Log4j2;
@@ -10,12 +10,10 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
 import javax.mail.internet.MimeMessage;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.stream.Stream;
-
-import static java.util.stream.Collectors.toList;
 
 @Service
 @RequiredArgsConstructor
@@ -52,24 +50,24 @@ public class EmailSender implements EmailService {
 
   @Override
   public void sendEmailOnLogin(String email, String message) {
-    sendEmailToAddressHtmlMessage(Stream.of(email).collect(toList()), LOGIN_SUBJECT, message);
+    sendEmailToAddressHtmlMessage(Collections.singletonList(email), LOGIN_SUBJECT, message);
   }
 
   @Override
   public void sendEmailOnRegistration(String email, String message) {
     final String htmlMessage = HTMLemailPattern.getConfirmRegisterMessage(email, message);
-    sendEmailToAddressHtmlMessage(Stream.of(email).collect(toList()), REGISTRATION_CONFIRMATION, htmlMessage);
+    sendEmailToAddressHtmlMessage(Collections.singletonList(email), REGISTRATION_CONFIRMATION, htmlMessage);
   }
 
   @Override
   public void sendEmailOnChangePassword(String email, String message) {
     final String htmlMessage = HTMLemailPattern.getRestorePasswordMessage(email,message);
-    sendEmailToAddressHtmlMessage(Stream.of(email).collect(toList()), CHANGE_PASS_CONFIRM, htmlMessage);
+    sendEmailToAddressHtmlMessage(Collections.singletonList(email), CHANGE_PASS_CONFIRM, htmlMessage);
   }
 
   @Override
   public void sendEmailOnResetPassword(String email, String message) {
-    sendEmailToAddressHtmlMessage(Stream.of(email).collect(toList()), RESET_PASS, message);
+    sendEmailToAddressHtmlMessage(Collections.singletonList(email), RESET_PASS, message);
   }
 
 }
