@@ -1,9 +1,8 @@
 package anta.project.edcourser.config.security.token.jwt;
 
-import anta.project.edcourser.exceptions.UserNotFoundException;
+import anta.project.edcourser.exceptions.authorization.UserNotFoundException;
 import anta.project.edcourser.services.user.UserService;
 import anta.project.edcourser.models.sql.user.User;
-import anta.project.edcourser.services.user.UserService;
 import io.jsonwebtoken.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -88,8 +87,7 @@ public class JwtTokenProvider {
             String bearerToken = req.getHeader("Authorization");
             bearerToken = bearerToken.substring(7, bearerToken.length());
 
-            return userService.findByEmail(getEmail(bearerToken))
-                    .orElseThrow(() -> new UserNotFoundException("User not found"));
+            return userService.findByEmail(getEmail(bearerToken));
         } catch (ExpiredJwtException e) {
             return null;
         }
@@ -97,8 +95,7 @@ public class JwtTokenProvider {
 
     public User getUserByToken(String bearerToken) {
         try {
-            return userService.findByEmail(getEmail(bearerToken))
-                    .orElseThrow(() -> new UserNotFoundException("User not found"));
+            return userService.findByEmail(getEmail(bearerToken));
         } catch (ExpiredJwtException e) {
             return null;
         }
