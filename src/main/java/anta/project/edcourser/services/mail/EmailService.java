@@ -1,4 +1,4 @@
-package anta.project.edcourser.services.email;
+package anta.project.edcourser.services.mail;
 
 import java.util.List;
 
