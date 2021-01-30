@@ -28,14 +28,11 @@ public enum Statuses {
     TelegramNotConnected(24),
     TelegramAlreadyConnected(25),
     IdentifierNotFound(26),
-    BannedIp(27),
+    BannedUser(27),
     LimitReached(28),
     UnauthorizedRequest(29),
     EmailNotConfirmed(30),
-    NotificationNotSelected(31),
-    SupportTimeout(32),
-    SettingsNotExists(33),
-    NotImplemented(34);
+    InvalidCourse(31);
 
     private int status;
 
