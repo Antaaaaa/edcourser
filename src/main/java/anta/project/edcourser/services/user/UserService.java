@@ -4,10 +4,12 @@ import anta.project.edcourser.dto.authorization.UserAuthorization;
 import anta.project.edcourser.dto.authorization.UserRegistration;
 import anta.project.edcourser.models.sql.user.User;
 import anta.project.edcourser.models.sql.user.UserToken;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Map;
 
+@Service
 public interface UserService {
     List<User> findAll();
     User findByEmail(String email);
