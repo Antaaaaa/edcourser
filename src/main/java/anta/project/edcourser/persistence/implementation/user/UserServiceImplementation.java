@@ -7,6 +7,7 @@ import anta.project.edcourser.enums.UserRole;
 import anta.project.edcourser.enums.UserVerificationStatus;
 import anta.project.edcourser.exceptions.authorization.NotValidRegistrationDataException;
 import anta.project.edcourser.exceptions.authorization.UserCreationException;
+import anta.project.edcourser.exceptions.authorization.UserIsBannedException;
 import anta.project.edcourser.exceptions.authorization.UserNotFoundException;
 import anta.project.edcourser.exceptions.data.ChangeEmailDataException;
 import anta.project.edcourser.exceptions.data.ChangePaswordDataException;
@@ -80,8 +81,11 @@ public class UserServiceImplementation implements UserService {
         manager.authenticate(new UsernamePasswordAuthenticationToken(
                 authorization.getEmail(), authorization.getPassword()));
         User user = findByEmail(authorization.getEmail());
+        checkIfNotBanned(user);
+
         String token = jwtTokenProvider.createToken(user.getEmail());
         saveUserToken(user, token);
+
         return Map.of("email", user.getEmail(), "token", token);
     }
 
@@ -134,6 +138,12 @@ public class UserServiceImplementation implements UserService {
         user.setUserVerificationInfo(userVerificationInfo);
         userVerificationInfoService.save(userVerificationInfo);
         userRepository.save(user);
+    }
+
+    private void checkIfNotBanned(User user) {
+        if (user.getUserConfig().isBanned()) {
+            throw new UserIsBannedException("Such user is banned");
+        }
     }
 
     @Override

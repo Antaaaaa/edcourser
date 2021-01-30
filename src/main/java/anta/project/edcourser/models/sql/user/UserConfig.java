@@ -16,6 +16,9 @@ import javax.persistence.*;
 @Data
 public class UserConfig extends BaseEntity {
 
+    @Column(name = "is_banned", columnDefinition = "boolean default false")
+    private boolean isBanned;
+
     @OneToOne(mappedBy = "userConfig")
     private User user;
 
