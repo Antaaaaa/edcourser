@@ -1,7 +1,7 @@
-package anta.project.edcourser.persistence.implementation;
+package anta.project.edcourser.persistence.implementation.user;
 
 import anta.project.edcourser.models.sql.user.UserVerificationInfo;
-import anta.project.edcourser.persistence.repositories.UserVerificationInfoRepository;
+import anta.project.edcourser.persistence.repositories.user.UserVerificationInfoRepository;
 import anta.project.edcourser.services.user.UserVerificationInfoService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;

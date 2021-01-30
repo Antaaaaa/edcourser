@@ -1,4 +1,4 @@
-package anta.project.edcourser.persistence.implementation;
+package anta.project.edcourser.persistence.implementation.user;
 
 import anta.project.edcourser.config.security.token.jwt.JwtTokenProvider;
 import anta.project.edcourser.dto.authorization.UserAuthorization;
@@ -8,15 +8,13 @@ import anta.project.edcourser.enums.UserVerificationStatus;
 import anta.project.edcourser.exceptions.authorization.NotValidRegistrationDataException;
 import anta.project.edcourser.exceptions.authorization.UserCreationException;
 import anta.project.edcourser.exceptions.authorization.UserNotFoundException;
-import anta.project.edcourser.exceptions.authorization.UserTokenNotFoundException;
 import anta.project.edcourser.exceptions.data.ChangeEmailDataException;
 import anta.project.edcourser.exceptions.data.ChangePaswordDataException;
 import anta.project.edcourser.models.sql.user.*;
-import anta.project.edcourser.persistence.repositories.UserRepository;
+import anta.project.edcourser.persistence.repositories.user.UserRepository;
 import anta.project.edcourser.services.user.*;
 import anta.project.edcourser.utils.Validator;
 import anta.project.edcourser.utils.email.EmailSender;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;

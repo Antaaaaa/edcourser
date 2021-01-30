@@ -1,8 +1,8 @@
-package anta.project.edcourser.persistence.implementation;
+package anta.project.edcourser.persistence.implementation.user;
 
 import anta.project.edcourser.exceptions.authorization.UserTokenNotFoundException;
 import anta.project.edcourser.models.sql.user.UserToken;
-import anta.project.edcourser.persistence.repositories.UserTokenRepository;
+import anta.project.edcourser.persistence.repositories.user.UserTokenRepository;
 import anta.project.edcourser.services.user.UserTokenService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;

@@ -1,7 +1,7 @@
-package anta.project.edcourser.persistence.implementation;
+package anta.project.edcourser.persistence.implementation.user;
 
 import anta.project.edcourser.models.sql.user.UserInfo;
-import anta.project.edcourser.persistence.repositories.UserInfoRepository;
+import anta.project.edcourser.persistence.repositories.user.UserInfoRepository;
 import anta.project.edcourser.services.user.UserInfoService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;

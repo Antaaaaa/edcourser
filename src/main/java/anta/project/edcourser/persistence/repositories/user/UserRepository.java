@@ -1,4 +1,4 @@
-package anta.project.edcourser.persistence.repositories;
+package anta.project.edcourser.persistence.repositories.user;
 
 import anta.project.edcourser.enums.UserRole;
 import anta.project.edcourser.models.sql.user.User;
